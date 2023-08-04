@@ -5,6 +5,9 @@ using HarmonyLib;
 using MoreStatus;
 using SideLoader;
 using System;
+using System.Linq;
+using uNature.Core.ClassExtensions;
+using uNature.Wrappers.Linq;
 using UnityEngine;
 
 
@@ -20,9 +23,10 @@ namespace ItemDetailMoreStatus
         public const string VERSION = "1.0.0";
 
         public static MoreStatus Instance;
+        public static GameObject SeparatorGO;
         public static ManualLogSource Log => Instance.Logger;
 
-        public static GameObject gameObject;
+        public static GameObject GameObject;
 
         public FoodStatus foodStatus;
 
@@ -33,7 +37,7 @@ namespace ItemDetailMoreStatus
         {
             Instance = this;
             
-            Log.LogMessage($"Hello world from {NAME} {VERSION}!");
+            //Log.LogMessage($"Hello world from {NAME} {VERSION}!");
 
             // Any config settings you define should be set up like this:
             //Don't forget!
@@ -41,30 +45,36 @@ namespace ItemDetailMoreStatus
     
             new Harmony(GUID).PatchAll();
 
-            //SL.OnPacksLoaded += Setup;
+            SL.OnPacksLoaded += Setup;
 
         }
         
         internal void Setup()
         {
-            
 
-            //var packName = "More Status - Catharina";
-            //var pack = SL.GetSLPack(packName);
-            var clonedGaberries = ResourcesPrefabManager.Instance.GetItemPrefab(4000010);
+            var packName = "More Status - Catharina";
+            var pack = SL.GetSLPack(packName);
+            var bundle = pack.AssetBundles["separatorbundle"];
+           
+            var canvasAsset = bundle.LoadAsset<GameObject>("separatorBundle");
 
-            var template = new SL_Item()
-            {
-                Target_ItemID = 4000010, // gaberries
-                Description = clonedGaberries.Description
-            };
+            SeparatorGO = Instantiate(canvasAsset);
 
-            
-            template.Description += "test";
-            template.SLPackName = "More Status - Catharina";
-            template.SubfolderName = "Items";
+            DontDestroyOnLoad(SeparatorGO);
 
-            template.Apply();
+            Log.LogMessage("before get canvas"); // daqui pra baixo nao funciona, mas a  imagem apareceu
+
+            var canvas = (Canvas)SeparatorGO.GetComponentByName("Canvas");
+           // var canvas = SeparatorGO.GetComponent<Canvas>();
+            canvas.sortingOrder = 999;
+
+            Log.LogMessage("MSC: before adding component");
+            SeparatorGO.AddComponent<GUIManager>(); 
+
+            //var targetMgrHolder = GameObject.transform.Find("separator").gameObject;
+
+            Log.LogMessage("more status finished set up");
+
 
         }
         
