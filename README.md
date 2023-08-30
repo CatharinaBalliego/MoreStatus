@@ -1,5 +1,5 @@
 # More Status
-MoreStatus display stamina recovery rate and health recovery rate on food items.
+MoreStatus displays stamina recovery rate and health recovery rate on food items.
 
 
 <img src="_Resources/screenshot.jpg" alt="Before and after mod installation" />
