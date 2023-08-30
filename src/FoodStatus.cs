@@ -20,46 +20,43 @@ namespace MoreStatus
     [HarmonyPatch(typeof(ItemDetailsDisplay), "RefreshDisplay")]
     public class FoodStatus
     {
-        static  EffectInfo effectInfo = new EffectInfo();
+        static  EffectInfo effectConverter = new EffectInfo();
        
 
         [HarmonyPatch(typeof(ItemDetailsDisplay), "RefreshDetail")]
         public class ItemDetailsDisplay_RefreshDetail
         {
-            //mudar para prefix nao resolveu para atualizar a descricao antes.
             [HarmonyPrefix]
             public static void RefreshDetail(ItemDetailsDisplay __instance, int _rowIndex, DisplayedInfos _infoType)
             {
-
                 Item m_lastItem = (Item)AccessTools.Field(typeof(ItemDetailsDisplay), "m_lastItem").GetValue(__instance);
-                if (m_lastItem.IsPerishable && m_lastItem.CurrentDurability > 0 )
-                {
+                
                     if (m_lastItem.IsFood)
                     {
-                       
+                        string effects_description = "";
+
                         foreach (var effect in m_lastItem.m_effects)
                         {
                             if (effect.Value.Effect.GetType() == typeof(AddStatusEffect))
                             {
-                                var castTypeEffect = (AddStatusEffect)effect.Value.Effect;
-                                if (effectInfo.effectsInfo.ContainsKey(castTypeEffect.Status.IdentifierName))
+                                var status_effect = (AddStatusEffect)effect.Value.Effect;
+                                if (effectConverter.effectsInfo.ContainsKey(status_effect.Status.IdentifierName))
                                 {
-                                    var description = "\n" + castTypeEffect.Status.Description ;
-                                    description = description.Replace("[E1V1]", effectInfo.GetRecoveryRate(castTypeEffect.Status.IdentifierName));
-                                    
-                                    
-                                    //check if description contains info before inserting
-                                    if (!m_lastItem.m_localizedDescription.Contains(description))
-                                    {
-                                        m_lastItem.m_localizedDescription += description;
-                                    }
+                                    var status_description = status_effect.Status.Description + "\n" ;
 
+                                    status_description = status_description.Replace("[E1V1]", effectConverter.GetRecoveryRate(status_effect.Status.IdentifierName));
+                                    
+                                    effects_description += status_description;
                                 }
-                                //m_lastItem.m_localizedDescription += castTypeEffect.Status.Description;
                             }
                         }
+
+                        //prevents from inserting same info multiple times when selecting same item again
+                        if (!m_lastItem.m_localizedDescription.Contains(effects_description))
+                        {
+                            m_lastItem.m_localizedDescription = effects_description + "\n" + m_lastItem.m_localizedDescription;
+                        }
                     }
-                }
             }
         }
     }
