@@ -16,16 +16,13 @@ You need to be on **“default-mono”** Branch:
 
 * Extract to a new folder, then navigate to **“Outward\Outward_Defed\BepInEx\plugins”** and move the new folder there.
 
-
-
-## Credits
-
-Thanks to **Sinai** for making the template, and **Ehaugw** for the help.
-
-
 ## Contribution
 
 Feel free to update any new features to this mod
 
 ## Support
 If you need further help installing the mod, check on [Outward wiki](https://outward.fandom.com/wiki/Installing_Mods) or send me a message!
+
+## Credits
+
+Thanks to **Sinai** for making the template, and **Ehaugw** for the help.
